@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ShoppingBag, Menu, CircleUserRound, List } from "lucide-react";
 import {
   DropdownMenu,
@@ -19,7 +20,9 @@ export default function NavBar() {
         </div>
       </div>
       <div className="w-fit flex items-center gap-4">
-        <ShoppingBag strokeWidth={1.5} />
+        <Link href="/cart">
+          <ShoppingBag strokeWidth={1.5} />
+        </Link>
         <DropdownMenu>
           <DropdownMenuTrigger className="cursor-pointer">
             <Menu size={28} strokeWidth={1.4} />
@@ -33,14 +36,12 @@ export default function NavBar() {
               Perfil
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="flex gap-2 items-center">
-              <ShoppingBag
-                size={17}
-                strokeWidth={2}
-                className="text-foreground"
-              />
-              Carrinho
-            </DropdownMenuItem>
+            <Link href="/cart" passHref>
+              <DropdownMenuItem className="flex gap-2 items-center cursor-pointer">
+                <ShoppingBag size={17} strokeWidth={2} className="text-foreground" />
+                Carrinho
+              </DropdownMenuItem>
+            </Link>
             <DropdownMenuItem className="flex gap-2 items-center">
               <List size={17} strokeWidth={2} className="text-foreground" />
               Minhas Reservas

@@ -1,6 +1,8 @@
+"use client";
 import { rooms } from "@/data/rooms";
 import { Star, BedSingle, Coffee, Tv, Gem } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { use } from "react";
 
 export default function RoomCard() {
   const getFeatureIcon = (feature: string) => {
@@ -14,7 +16,10 @@ export default function RoomCard() {
   };
 
   return (
-    <div id="rooms" className="w-full flex flex-col items-center gap-4 md:gap-6">
+    <div
+      id="rooms"
+      className="w-full flex flex-col items-center gap-4 md:gap-6"
+    >
       {rooms.map((room) => (
         <div
           key={room.id}
@@ -58,9 +63,17 @@ export default function RoomCard() {
                 <span className="font-normal text-xs md:text-base">diária</span>
               </div>
             </div>
-            <Button className="bg-foreground w-full h-8 rounded-full mt-1 cursor-pointer">
+            <Button
+              className="bg-foreground w-full h-8 rounded-full mt-1 cursor-pointer"
+              onClick={() => {
+                const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
+                const updatedCart = [...existingCart, room];
+                localStorage.setItem("cart", JSON.stringify(updatedCart));
+                alert("Reserva adicionada ao carrinho!");
+              }}>
               Reservar
             </Button>
+
           </div>
         </div>
       ))}
