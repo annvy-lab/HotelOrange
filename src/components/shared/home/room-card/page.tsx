@@ -2,7 +2,7 @@
 import { rooms } from "@/data/rooms";
 import { Star, BedSingle, Coffee, Tv, Gem } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { use } from "react";
+import { useState } from "react";
 
 export default function RoomCard() {
   const getFeatureIcon = (feature: string) => {
@@ -14,6 +14,8 @@ export default function RoomCard() {
       return <Tv className="w-4 h-4 text-primary" />;
     return <Gem className="w-4 h-4 text-primary" />;
   };
+
+  const [added, setAdded] = useState<number | null>(null);
 
   return (
     <div
@@ -66,13 +68,36 @@ export default function RoomCard() {
             <Button
               className="bg-foreground w-full h-8 rounded-full mt-1 cursor-pointer"
               onClick={() => {
-                const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
-                const updatedCart = [...existingCart, room];
-                localStorage.setItem("cart", JSON.stringify(updatedCart));
-              }}>
+                const existingCart = JSON.parse(
+                  localStorage.getItem("cart") || "[]"
+                );
+                const index = existingCart.findIndex(
+                  (item: any) => item.id === room.id
+                );
+                if (index > -1) {
+                  // Se já existe, aumenta a quantidade
+                  existingCart[index].quantity =
+                    (existingCart[index].quantity || 1) + 1;
+                  localStorage.setItem("cart", JSON.stringify(existingCart));
+                } else {
+                  // Se não existe, adiciona com quantity: 1
+                  const roomWithQuantity = { ...room, quantity: 1 };
+                  localStorage.setItem(
+                    "cart",
+                    JSON.stringify([...existingCart, roomWithQuantity])
+                  );
+                }
+                setAdded(room.id);
+                setTimeout(() => setAdded(null), 1200);
+              }}
+            >
               Reservar
             </Button>
-
+            {added === room.id && (
+              <span className="text-green-600 text-xs mt-1">
+                Adicionado ao carrinho!
+              </span>
+            )}
           </div>
         </div>
       ))}
