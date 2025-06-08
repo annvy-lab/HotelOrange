@@ -40,10 +40,19 @@ export default function CartPage() {
 
   return (
     <div className="p-6 space-y-4">
-      <h1 className="pl-10 text-2xl font-bold">Seu Carrinho</h1>
-      {cart.length === 0 ? (
-        <p>Seu carrinho está vazio.</p>
-      ) : (
+        <div>
+            <button className="flex items-center gap-2 mb-4" onClick={() => window.history.back()}>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+                <span className="text-lg font-semibold">Voltar</span>
+            </button>
+        </div>
+
+        <h1 className="pl-10 mt-10 text-2xl font-bold">Seu Carrinho</h1>
+            {cart.length === 0 ? (
+            <p className=" p-10 m-10 justify-center itens-center text-center">Seu carrinho está vazio.</p>
+        ) : (
         <>
         <div className="flex flex-wrap justify-center gap-4">
 
@@ -70,7 +79,7 @@ export default function CartPage() {
                         </li>
                     );
                     })}
-                 </ul>
+                </ul>
                 
                 <div className="ml-3 flex w-full justify-between items-center mt-2 mb-1">
                     <div className="flex gap-1 items-baseline w-fit justify-start text-primary">
@@ -81,9 +90,9 @@ export default function CartPage() {
                     </div>
                 </div>
 
-              <Button className="mb-2" variant="destructive" onClick={() => removeFromCart(room.id)}>
-                Remover
-              </Button>
+                <Button className="mb-2" variant="destructive" onClick={() => removeFromCart(room.id)}>
+                    Remover
+                </Button>
             </div>
           ))}
         </div>

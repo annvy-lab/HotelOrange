@@ -69,7 +69,6 @@ export default function RoomCard() {
                 const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
                 const updatedCart = [...existingCart, room];
                 localStorage.setItem("cart", JSON.stringify(updatedCart));
-                alert("Reserva adicionada ao carrinho!");
               }}>
               Reservar
             </Button>
