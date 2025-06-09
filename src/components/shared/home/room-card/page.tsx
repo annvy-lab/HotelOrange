@@ -75,12 +75,10 @@ export default function RoomCard() {
                   (item: any) => item.id === room.id
                 );
                 if (index > -1) {
-                  // Se já existe, aumenta a quantidade
                   existingCart[index].quantity =
                     (existingCart[index].quantity || 1) + 1;
                   localStorage.setItem("cart", JSON.stringify(existingCart));
                 } else {
-                  // Se não existe, adiciona com quantity: 1
                   const roomWithQuantity = { ...room, quantity: 1 };
                   localStorage.setItem(
                     "cart",

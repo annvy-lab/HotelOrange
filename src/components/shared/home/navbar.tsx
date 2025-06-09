@@ -9,29 +9,31 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function NavBar() {
   const [cartCount, setCartCount] = useState(0);
+  const router = useRouter();
 
   useEffect(() => {
-  if (typeof window !== "undefined") {
-    const updateCartCount = () => {
-      const storedCart = JSON.parse(localStorage.getItem("cart") || "[]");
-      setCartCount(storedCart.length);
-    };
+    if (typeof window !== "undefined") {
+      const updateCartCount = () => {
+        const storedCart = JSON.parse(localStorage.getItem("cart") || "[]");
+        setCartCount(storedCart.length);
+      };
 
-    updateCartCount();
+      updateCartCount();
 
-    window.addEventListener("storage", updateCartCount);
+      window.addEventListener("storage", updateCartCount);
 
-    const interval = setInterval(updateCartCount, 1000);
+      const interval = setInterval(updateCartCount, 1000);
 
-    return () => {
-      window.removeEventListener("storage", updateCartCount);
-      clearInterval(interval);
-    };
-  }
-}, []);
+      return () => {
+        window.removeEventListener("storage", updateCartCount);
+        clearInterval(interval);
+      };
+    }
+  }, []);
 
   return (
     <div className="w-full flex justify-between items-center">
@@ -57,23 +59,36 @@ export default function NavBar() {
             <Menu size={28} strokeWidth={1.4} />
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuItem className="flex gap-2 items-center">
-              <CircleUserRound
-                strokeWidth={2}
-                className="text-foreground"
-              />
-              Perfil
-            </DropdownMenuItem>
+          <Link href="/auth/profile" passHref>
+              <DropdownMenuItem className="flex gap-2 items-center">
+                <CircleUserRound strokeWidth={2} className="text-foreground" />
+                Perfil
+              </DropdownMenuItem>
+            </Link>
             <DropdownMenuSeparator />
             <Link href="/cart" passHref>
               <DropdownMenuItem className="flex gap-2 items-center cursor-pointer">
-                <ShoppingBag size={17} strokeWidth={2} className="text-foreground" />
+                <ShoppingBag
+                  size={17}
+                  strokeWidth={2}
+                  className="text-foreground"
+                />
                 Carrinho
               </DropdownMenuItem>
             </Link>
             <DropdownMenuItem className="flex gap-2 items-center">
               <List size={17} strokeWidth={2} className="text-foreground" />
               Minhas Reservas
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              className="flex gap-2 items-center text-red-600 cursor-pointer"
+              onClick={() => {
+                localStorage.removeItem("loggedUser");
+                router.push("/auth/signin");
+              }}
+            >
+              Sair
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

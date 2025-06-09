@@ -48,7 +48,7 @@ export default function CartPage() {
       .map((room) =>
         room.id === id ? { ...room, quantity: room.quantity - 1 } : room
       )
-      .filter((room) => room.quantity > 0); // Remove itens com quantity 0
+      .filter((room) => room.quantity > 0);
     updateCart(updatedCart);
   };
 

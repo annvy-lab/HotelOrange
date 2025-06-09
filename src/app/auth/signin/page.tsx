@@ -2,19 +2,31 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
 
 export default function SignInPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const router = useRouter();
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+    const handleSignin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (email === 'admin@hotel.com' && password === '123456') {
-      router.push('/dashboard');
-    } else {
-      alert('Credenciais inválidas');
+
+    const users = JSON.parse(localStorage.getItem("users") || "[]");
+    const user = users.find(
+      (u: any) => u.email === email && u.password === password
+    );
+
+    if (!user) {
+      setError("E-mail ou senha inválidos.");
+      return;
     }
+    
+    localStorage.setItem("loggedUser", JSON.stringify(user));
+    setError("");
+    router.push("/dashboard"); // Redireciona para a home ou outra página desejada
+  
   };
 
   return (
@@ -42,7 +54,7 @@ export default function SignInPage() {
           <h2 className="text-3xl font-bold text-center text-gray-800 mb-4 mt-1">
             Login
           </h2>
-          <form onSubmit={handleSubmit} className="space-y-3"> 
+          <form onSubmit={handleSignin} className="space-y-3"> 
             <div>
               <label className="block text-gray-700 text-sm font-medium mb-1" htmlFor="email">
                 Email
@@ -59,7 +71,7 @@ export default function SignInPage() {
             </div>
             <div>
               <label className="block text-gray-700 text-sm font-medium mb-1" htmlFor="password">
-                Password
+                Senha
               </label>
               <input
                 type="password"
@@ -78,11 +90,13 @@ export default function SignInPage() {
                 >
                 Entrar
                 </button>
-                </div>
+            </div>
+            {error && <p className="text-red-600 text-center">{error}</p>}
+
           </form>
           <p className="mt-4 text-center text-sm text-gray-600">
             Não tem conta?{' '}
-            <a href="#" className="text-orange-500 hover:underline font-semibold">
+            <a href="/auth/signup" className="text-orange-500 hover:underline font-semibold">
               Cadastre-se
             </a>
           </p>
