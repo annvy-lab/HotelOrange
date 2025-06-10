@@ -1,10 +1,14 @@
 "use client";
+
 import { rooms } from "@/data/rooms";
 import { Star, BedSingle, Coffee, Tv, Gem } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { toast } from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 export default function RoomCard() {
+  const router = useRouter();
+
   const getFeatureIcon = (feature: string) => {
     if (feature.toLowerCase().includes("cama"))
       return <BedSingle className="w-4 h-4 text-primary" />;
@@ -15,8 +19,6 @@ export default function RoomCard() {
     return <Gem className="w-4 h-4 text-primary" />;
   };
 
-  const [added, setAdded] = useState<number | null>(null);
-
   return (
     <div
       id="rooms"
@@ -25,11 +27,12 @@ export default function RoomCard() {
       {rooms.map((room) => (
         <div
           key={room.id}
-          className="w-full h-fit max-h-100 bg-card rounded-2xl shadow-xl flex flex-col items-center md:max-w-140"
+          className="w-full h-fit max-h-100 bg-card rounded-2xl shadow-xl flex flex-col items-center md:max-w-140 cursor-pointer"
+          onClick={() => router.push(`/rooms/${room.id}`)}
         >
           <div
             className="rounded-t-2xl w-full h-20 bg-cover bg-center md:h-35"
-            style={{ backgroundImage: "url('/imageRoom.svg')" }}
+            style={{ backgroundImage: "url('/imageRoom.png')" }}
           ></div>
 
           <div className="px-3 py-3 w-full flex flex-col items-center">
@@ -67,7 +70,8 @@ export default function RoomCard() {
             </div>
             <Button
               className="bg-foreground w-full h-8 rounded-full mt-1 cursor-pointer"
-              onClick={() => {
+              onClick={(e) => {
+                e.stopPropagation();
                 const existingCart = JSON.parse(
                   localStorage.getItem("cart") || "[]"
                 );
@@ -85,17 +89,11 @@ export default function RoomCard() {
                     JSON.stringify([...existingCart, roomWithQuantity])
                   );
                 }
-                setAdded(room.id);
-                setTimeout(() => setAdded(null), 1200);
+                toast.success("Adicionado ao carrinho!");
               }}
             >
               Reservar
             </Button>
-            {added === room.id && (
-              <span className="text-green-600 text-xs mt-1">
-                Adicionado ao carrinho!
-              </span>
-            )}
           </div>
         </div>
       ))}

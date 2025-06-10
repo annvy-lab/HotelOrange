@@ -45,7 +45,7 @@ export function DateInput({ className }: React.HTMLAttributes<HTMLDivElement>) {
                 format(date.from, "LLL dd, y")
               )
             ) : (
-              <span className="text-foreground">Data</span>
+              <span className="text-foreground">Selecionar data</span>
             )}
           </Button>
         </PopoverTrigger>

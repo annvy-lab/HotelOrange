@@ -5,7 +5,7 @@ import RoomCard from "@/components/shared/home/room-card/page";
 
 export default function Dashboard() {
   return (
-    <div className="max-w-screen min-h-full p-8 md:px-16">
+    <div className="max-w-screen min-h-full p-8 pt-14 md:px-16">
       <NavBar />
       <BannerHome />
       <SearchCard />

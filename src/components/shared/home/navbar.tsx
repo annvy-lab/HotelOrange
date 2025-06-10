@@ -36,15 +36,15 @@ export default function NavBar() {
   }, []);
 
   return (
-    <div className="w-full flex justify-between items-center">
-      <div className="w-fit flex items-center gap-2">
+    <div className="fixed top-0 left-0 right-0 p-4 md:p-5 px-6 md:px-16 w-screen max-w-full flex justify-between items-center z-50 bg-background shadow-xs">
+      <a href="/home" className="w-fit flex items-center gap-2">
         <div className="h-4 w-4 bg-primary rounded-full">
           <br />
         </div>
         <div className="h-2 w-20 bg-primary rounded-xl">
           <br />
         </div>
-      </div>
+      </a>
       <div className="w-fit flex items-center gap-4">
         <Link href="/cart" className="relative">
           <ShoppingBag strokeWidth={1.5} />
@@ -59,7 +59,7 @@ export default function NavBar() {
             <Menu size={28} strokeWidth={1.4} />
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-          <Link href="/auth/profile" passHref>
+            <Link href="/auth/profile" passHref>
               <DropdownMenuItem className="flex gap-2 items-center">
                 <CircleUserRound strokeWidth={2} className="text-foreground" />
                 Perfil
