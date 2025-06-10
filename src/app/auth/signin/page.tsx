@@ -112,7 +112,6 @@ export default function SignInPage() {
                 Entrar
               </Button>
             </div>
-            {error && <p className="text-red-600 text-center">{error}</p>}
           </form>
           <p className="mt-4 text-center text-sm text-gray-600">
             Não tem conta?{" "}

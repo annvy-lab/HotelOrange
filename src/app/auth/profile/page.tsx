@@ -2,14 +2,14 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-
+import { Card } from "@/components/ui/card";
+import { LogOut } from "lucide-react";
+import toast from "react-hot-toast";
 
 export default function ProfilePage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [success, setSuccess] = useState(false);
-  const [error, setError] = useState("");
   const router = useRouter();
 
   useEffect(() => {
@@ -26,17 +26,20 @@ export default function ProfilePage() {
   const handleUpdate = (e: React.FormEvent) => {
     e.preventDefault();
     const loggedUser = JSON.parse(localStorage.getItem("loggedUser") || "null");
-    if (!loggedUser) return;
+    if (!loggedUser) {
+      toast.error("Usuário não autenticado.");
+      return;
+    }
 
     let users = JSON.parse(localStorage.getItem("users") || "[]");
 
     // Verifica se o novo e-mail já existe para outro usuário
-    if (
-      users.some(
-        (user: any) => user.email === email && user.email !== loggedUser.email
-      )
-    ) {
-      setError("E-mail já cadastrado por outro usuário.");
+    const emailExistente = users.some(
+      (user: any) => user.email === email && user.email !== loggedUser.email
+    );
+
+    if (emailExistente) {
+      toast.error("E-mail já cadastrado por outro usuário.");
       return;
     }
 
@@ -47,27 +50,27 @@ export default function ProfilePage() {
         : user
     );
     localStorage.setItem("users", JSON.stringify(users));
+
     // Atualiza usuário logado
     localStorage.setItem(
       "loggedUser",
       JSON.stringify({ name, email, password })
     );
-    setSuccess(true);
-    setError("");
-    setTimeout(() => setSuccess(false), 2000);
+
+    toast.success("Perfil atualizado com sucesso!");
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-white p-3">
-      <div className="bg-white rounded-3xl shadow-xl w-full max-w-sm p-8">
-
-              <button
-          className="flex items-center gap-2 mb-4"
+    <div className="flex items-center justify-center min-h-screen bg-background p-3">
+      <Card className="bg-card rounded-3xl shadow-xl w-full max-w-sm p-8">
+        <Button
+          variant="ghost"
+          className="w-3/12 flex items-center gap-2"
           onClick={() => window.history.back()}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6"
+            className="h-5 w-5"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -79,11 +82,11 @@ export default function ProfilePage() {
               d="M15 19l-7-7 7-7"
             />
           </svg>
-          <span className="text-lg font-semibold">Voltar</span>
-        </button>
-        
+          <span className="text-base font-semibold">Voltar</span>
+        </Button>
+
         <h2 className="text-2xl font-bold mb-6 text-center">Meu Perfil</h2>
-        <form onSubmit={handleUpdate} className="space-y-4">
+        <form onSubmit={handleUpdate} className="flex flex-col gap-4 pb-0">
           <input
             type="text"
             placeholder="Nome"
@@ -111,14 +114,20 @@ export default function ProfilePage() {
           <Button type="submit" className="w-full">
             Salvar Alterações
           </Button>
-          {success && (
-            <p className="text-green-600 text-center">
-              Dados atualizados com sucesso!
-            </p>
-          )}
-          {error && <p className="text-red-600 text-center">{error}</p>}
+          <Button
+            variant="ghost"
+            className="w-4/12 flex gap-2 items-center hover:text-red-700 cursor-pointer"
+            onClick={() => {
+              localStorage.removeItem("loggedUser");
+              toast("Logout realizado!");
+              router.push("/auth/signin");
+            }}
+          >
+            <LogOut />
+            Logout
+          </Button>
         </form>
-      </div>
+      </Card>
     </div>
   );
 }
