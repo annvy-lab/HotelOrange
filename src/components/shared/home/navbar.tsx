@@ -1,11 +1,10 @@
 "use client";
 import Link from "next/link";
-import { ShoppingBag, Menu, CircleUserRound, List } from "lucide-react";
+import { ShoppingBag, Menu, CircleUserRound, List, Moon } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useEffect, useState } from "react";
@@ -45,8 +44,8 @@ export default function NavBar() {
           <br />
         </div>
       </a>
-      <div className="w-fit flex items-center gap-4">
-        <Link href="/cart" className="relative">
+      <div className="w-fit flex items-center gap-6">
+        <Link href="/cart" className="relative flex items-center gap-1 text-sm">
           <ShoppingBag strokeWidth={1.5} />
           {cartCount > 0 && (
             <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5 min-w-[18px] text-center">
@@ -54,44 +53,18 @@ export default function NavBar() {
             </span>
           )}
         </Link>
-        <DropdownMenu>
-          <DropdownMenuTrigger className="cursor-pointer">
-            <Menu size={28} strokeWidth={1.4} />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <Link href="/auth/profile" passHref>
-              <DropdownMenuItem className="flex gap-2 items-center">
-                <CircleUserRound strokeWidth={2} className="text-foreground" />
-                Perfil
-              </DropdownMenuItem>
-            </Link>
-            <DropdownMenuSeparator />
-            <Link href="/cart" passHref>
-              <DropdownMenuItem className="flex gap-2 items-center cursor-pointer">
-                <ShoppingBag
-                  size={17}
-                  strokeWidth={2}
-                  className="text-foreground"
-                />
-                Carrinho
-              </DropdownMenuItem>
-            </Link>
-            <DropdownMenuItem className="flex gap-2 items-center">
-              <List size={17} strokeWidth={2} className="text-foreground" />
-              Minhas Reservas
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              className="flex gap-2 items-center text-red-600 cursor-pointer"
-              onClick={() => {
-                localStorage.removeItem("loggedUser");
-                router.push("/auth/signin");
-              }}
-            >
-              Sair
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <Link
+          href="/my-reservations"
+          className="relative flex items-center gap-1 text-sm"
+        >
+          <Moon strokeWidth={1.5} />
+        </Link>
+        <Link
+          href="/auth/profile"
+          className="relative flex items-center gap-1 text-sm"
+        >
+          <CircleUserRound strokeWidth={1.5} />
+        </Link>
       </div>
     </div>
   );
