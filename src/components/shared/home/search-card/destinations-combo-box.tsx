@@ -45,7 +45,7 @@ export default function DestinationsComboBox() {
             </div>
             {value
               ? locationOptions.find((option) => option.value === value)?.label
-              : "Local"}
+              : "Selecionar Local"}
           </div>
           <ChevronsUpDown className="opacity-50 h-4 w-4" />
         </Button>
@@ -57,12 +57,16 @@ export default function DestinationsComboBox() {
         }}
       >
         <Command>
-          <CommandInput placeholder="Buscar cidade ou bairro..." className="h-9" />
+          <CommandInput
+            placeholder="Buscar cidade ou bairro..."
+            className="h-9"
+          />
           <CommandList>
             <CommandEmpty>Nenhum local encontrado.</CommandEmpty>
             <CommandGroup>
               {locationOptions.map((option) => (
-                <CommandItem className="md:text-base"
+                <CommandItem
+                  className="md:text-base"
                   key={option.value}
                   value={option.value}
                   onSelect={(currentValue) => {
@@ -74,7 +78,9 @@ export default function DestinationsComboBox() {
                   <Check
                     className={cn(
                       "ml-auto h-4 w-4",
-                      value === option.value ? "text-primary opacity-100" : "opacity-0"
+                      value === option.value
+                        ? "text-primary opacity-100"
+                        : "opacity-0"
                     )}
                   />
                 </CommandItem>

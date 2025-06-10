@@ -1,8 +1,14 @@
+"use client";
+
 import { rooms } from "@/data/rooms";
 import { Star, BedSingle, Coffee, Tv, Gem } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { toast } from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 export default function RoomCard() {
+  const router = useRouter();
+
   const getFeatureIcon = (feature: string) => {
     if (feature.toLowerCase().includes("cama"))
       return <BedSingle className="w-4 h-4 text-primary" />;
@@ -14,15 +20,19 @@ export default function RoomCard() {
   };
 
   return (
-    <div id="rooms" className="w-full flex flex-col items-center gap-4 md:gap-6">
+    <div
+      id="rooms"
+      className="w-full flex flex-col items-center gap-4 md:gap-6"
+    >
       {rooms.map((room) => (
         <div
           key={room.id}
-          className="w-full h-fit max-h-100 bg-card rounded-2xl shadow-xl flex flex-col items-center md:max-w-140"
+          className="w-full h-fit max-h-100 bg-card rounded-2xl shadow-xl flex flex-col items-center md:max-w-140 cursor-pointer"
+          onClick={() => router.push(`/rooms/${room.id}`)}
         >
           <div
             className="rounded-t-2xl w-full h-20 bg-cover bg-center md:h-35"
-            style={{ backgroundImage: "url('/imageRoom.svg')" }}
+            style={{ backgroundImage: "url('/imageRoom.png')" }}
           ></div>
 
           <div className="px-3 py-3 w-full flex flex-col items-center">
@@ -58,7 +68,30 @@ export default function RoomCard() {
                 <span className="font-normal text-xs md:text-base">diária</span>
               </div>
             </div>
-            <Button className="bg-foreground w-full h-8 rounded-full mt-1 cursor-pointer">
+            <Button
+              className="bg-foreground w-full h-8 rounded-full mt-1 cursor-pointer"
+              onClick={(e) => {
+                e.stopPropagation();
+                const existingCart = JSON.parse(
+                  localStorage.getItem("cart") || "[]"
+                );
+                const index = existingCart.findIndex(
+                  (item: any) => item.id === room.id
+                );
+                if (index > -1) {
+                  existingCart[index].quantity =
+                    (existingCart[index].quantity || 1) + 1;
+                  localStorage.setItem("cart", JSON.stringify(existingCart));
+                } else {
+                  const roomWithQuantity = { ...room, quantity: 1 };
+                  localStorage.setItem(
+                    "cart",
+                    JSON.stringify([...existingCart, roomWithQuantity])
+                  );
+                }
+                toast.success("Adicionado ao carrinho!");
+              }}
+            >
               Reservar
             </Button>
           </div>

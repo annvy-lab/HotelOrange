@@ -30,7 +30,15 @@ export default function RootLayout({
       className={`${urbanist.variable} ${abhayaLibre.variable}`}
     >
       <body className="font-sans antialiased">
-        <Toaster position="top-center" reverseOrder={false} />
+        <Toaster
+          position="top-right"
+          reverseOrder={false}
+          toastOptions={{
+            style: {
+              borderRadius: "9999px",
+            },
+          }}
+        />
         {children}
       </body>
     </html>
