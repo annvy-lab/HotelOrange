@@ -191,8 +191,8 @@ export default function CartPage() {
                 className="w-full grid grid-cols-1 md:grid-cols-2 gap-4"
               >
                 <div className="flex items-center justify-between gap-4 border rounded-lg p-4 cursor-pointer transition-colors data-[state=checked]:border-primary data-[state=checked]:bg-muted bg-card">
-                  <div className="flex items-center gap-1">
-                    <CreditCard className="w-5 h-5 text-primary" />
+                  <div className="flex items-center gap-2">
+                    <CreditCard className="w-4 h-4" strokeWidth={1.5} />
                     <Label
                       htmlFor="credito"
                       className="font-medium cursor-pointer"
@@ -204,8 +204,8 @@ export default function CartPage() {
                 </div>
 
                 <div className="flex items-center justify-between gap-4 border rounded-lg p-4 cursor-pointer transition-colors data-[state=checked]:border-primary data-[state=checked]:bg-muted bg-card">
-                  <div className="flex items-center gap-1">
-                    <Banknote className="w-5 h-5 text-primary" />
+                  <div className="flex items-center gap-2">
+                    <Banknote className="w-4 h-4" strokeWidth={1.5} />
                     <Label
                       htmlFor="debito"
                       className="font-medium cursor-pointer"
@@ -217,18 +217,23 @@ export default function CartPage() {
                 </div>
 
                 <div className="flex items-center justify-between gap-4 border rounded-lg p-4 cursor-pointer transition-colors data-[state=checked]:border-primary data-[state=checked]:bg-muted bg-card">
-                  <div className="flex items-center gap-1">
-                    <Landmark className="w-5 h-5 text-primary" />
+                  <div className="flex items-center gap-2">
+                    <img
+                      className="w-4 h-4"
+                      src="/icon-pix.svg"
+                      alt="Ícone PIX"
+                    />
+
                     <Label htmlFor="pix" className="font-medium cursor-pointer">
-                      PIX
+                      Pix
                     </Label>
                   </div>
                   <RadioGroupItem value="pix" id="pix" />
                 </div>
 
                 <div className="flex items-center justify-between gap-4 border rounded-lg p-4 cursor-pointer transition-colors data-[state=checked]:border-primary data-[state=checked]:bg-muted bg-card">
-                  <div className="flex items-center gap-1">
-                    <Barcode className="w-5 h-5 text-primary" />
+                  <div className="flex items-center gap-2">
+                    <Barcode className="w-4 h-4" strokeWidth={1.5} />
                     <Label
                       htmlFor="boleto"
                       className="font-medium cursor-pointer"
