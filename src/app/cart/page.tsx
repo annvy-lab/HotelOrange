@@ -2,10 +2,6 @@
 
 import { useEffect, useState, useRef } from "react";
 import {
-  BedSingle,
-  Coffee,
-  Tv,
-  Gem,
   Plus,
   Minus,
   CreditCard,
@@ -16,9 +12,10 @@ import {
   MapPin,
   Check,
   Calendar,
+  ChevronsUpDown,
 } from "lucide-react";
 import { z } from "zod";
-import { useForm } from "react-hook-form";
+import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
 
@@ -43,9 +40,28 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Label } from "@/components/ui/label";
 
 import NavBar from "@/components/shared/home/navbar";
+import { cn } from "@/lib/utils";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { destinations } from "@/data/destinations";
 import { DateInput } from "@/components/shared/home/search-card/date-input";
-import DestinationsComboBox from "@/components/shared/home/search-card/destinations-combo-box";
-import { FormProvider } from "react-hook-form";
+import { Controller } from "react-hook-form";
+
+const locationOptions = destinations.map((loc) => ({
+  label: `${loc.cidade} - ${loc.estado} (${loc.bairro})`,
+  value: `${loc.cidade}-${loc.estado}`.toLowerCase().replace(/\s/g, "-"),
+}));
 
 interface Room {
   id: number;
@@ -81,26 +97,14 @@ const checkoutSchema = z.object({
 
 type CheckoutFormData = z.infer<typeof checkoutSchema>;
 
-const getFeatureIcon = (feature: string) => {
-  if (feature.toLowerCase().includes("cama"))
-    return <BedSingle className="w-4 h-4 text-primary" />;
-  if (feature.toLowerCase().includes("café"))
-    return <Coffee className="w-4 h-4 text-primary" />;
-  if (feature.toLowerCase().includes("tv"))
-    return <Tv className="w-4 h-4 text-primary" />;
-  return <Gem className="w-4 h-4 text-primary" />;
-};
-
 export default function CartPage() {
   const [cart, setCart] = useState<Room[]>([]);
   const [payment, setPayment] = useState("credito");
   const [etapaAtual, setEtapaAtual] = useState(1);
   const [processandoPagamento, setProcessandoPagamento] = useState(false);
-  const dateRef = useRef<{
-    from: Date | undefined;
-    to: Date | undefined;
-  } | null>(null);
-  const locationRef = useRef<{ value: string } | null>(null);
+  const [value, setValue] = useState(""); // Local selecionado
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const [open, setOpen] = useState(false);
 
   const form = useForm<CheckoutFormData>({
     resolver: zodResolver(checkoutSchema),
@@ -171,15 +175,12 @@ export default function CartPage() {
       return;
     }
 
-    const date = dateRef.current;
-    const location = locationRef.current?.value;
-
     if (!date?.from || !date.to) {
       toast.error("Selecione um intervalo de datas.");
       return;
     }
 
-    if (!location) {
+    if (!value) {
       toast.error("Selecione um local para a reserva.");
       return;
     }
@@ -190,9 +191,11 @@ export default function CartPage() {
     }
 
     setProcessandoPagamento(true);
+    // POST p/ API
     await new Promise((resolve) => setTimeout(resolve, 3000));
     toast.success("Reserva confirmada com sucesso!");
     setProcessandoPagamento(false);
+    updateCart([]); // Limpa o carrinho após reserva
   };
 
   return (
@@ -584,17 +587,92 @@ export default function CartPage() {
                   </div>
                   <div className="space-y-4 p-0">
                     <div className="flex flex-col items-start gap-1">
-                      <Label htmlFor="date" className="text-base">
-                        Data: <span className="text-red-700">*</span>
-                      </Label>
-                      <DateInput ref={dateRef} />
-                    </div>
-
-                    <div className="flex flex-col items-start gap-1">
                       <Label htmlFor="location" className="text-base">
                         Local <span className="text-red-700">*</span>
                       </Label>
-                      <DestinationsComboBox ref={locationRef} />
+                      <Popover open={open} onOpenChange={setOpen}>
+                        <PopoverTrigger asChild>
+                          <Button
+                            ref={triggerRef}
+                            variant="outline"
+                            role="combobox"
+                            aria-expanded={open}
+                            className="w-full h-9 justify-between bg-card hover:bg-card rounded-full"
+                          >
+                            <div className="flex items-center gap-3 ml-[-0.3rem] md:text-base">
+                              <div className="bg-primary rounded-full flex items-center justify-center text-card w-6 h-6">
+                                <MapPin />
+                              </div>
+                              {value
+                                ? locationOptions.find(
+                                    (option) => option.value === value
+                                  )?.label
+                                : "Selecionar Local"}
+                            </div>
+                            <ChevronsUpDown className="opacity-50 h-4 w-4" />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent
+                          className="p-0"
+                          style={{
+                            width: triggerRef.current?.offsetWidth ?? "100%",
+                          }}
+                        >
+                          <Command>
+                            <CommandInput
+                              placeholder="Buscar cidade ou bairro..."
+                              className="h-9"
+                            />
+                            <CommandList>
+                              <CommandEmpty>
+                                Nenhum local encontrado.
+                              </CommandEmpty>
+                              <CommandGroup>
+                                {locationOptions.map((option) => (
+                                  <CommandItem
+                                    className="md:text-base"
+                                    key={option.value}
+                                    value={option.value}
+                                    onSelect={(currentValue) => {
+                                      setValue(
+                                        currentValue === value
+                                          ? ""
+                                          : currentValue
+                                      );
+                                      setOpen(false);
+                                    }}
+                                  >
+                                    {option.label}
+                                    <Check
+                                      className={cn(
+                                        "ml-auto h-4 w-4",
+                                        value === option.value
+                                          ? "text-primary opacity-100"
+                                          : "opacity-0"
+                                      )}
+                                    />
+                                  </CommandItem>
+                                ))}
+                              </CommandGroup>
+                            </CommandList>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
+                    </div>
+                    <div className="flex flex-col items-start gap-1">
+                      <Label htmlFor="date" className="text-base">
+                        Data: <span className="text-red-700">*</span>
+                      </Label>
+                      <Controller
+                        name="periodoReserva"
+                        control={form.control}
+                        render={({ field }) => (
+                          <DateInput
+                            value={field.value}
+                            onChange={field.onChange}
+                          />
+                        )}
+                      />
                     </div>
 
                     <div className="flex flex-col items-start gap-1 w-full">

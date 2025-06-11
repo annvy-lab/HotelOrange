@@ -12,14 +12,14 @@ export default function SignInPage() {
   const router = useRouter();
   const { signIn } = useAuth();
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [senha, setSenha] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSignin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     try {
-      await signIn({ email, senha: password } as SignInDTO);
+      await signIn({ email, senha } as SignInDTO);
       toast.success("Login efetuado com sucesso!");
       router.push("/home");
     } catch (err: any) {
@@ -75,15 +75,15 @@ export default function SignInPage() {
             <div>
               <label
                 className="block text-gray-700 text-sm font-medium mb-1"
-                htmlFor="password"
+                htmlFor="senha"
               >
                 Senha
               </label>
               <Input
                 type="password"
-                id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                id="senha"
+                value={senha}
+                onChange={(e) => setSenha(e.target.value)}
                 required
                 placeholder="••••••••••••"
               />
