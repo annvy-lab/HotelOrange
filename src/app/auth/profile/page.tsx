@@ -15,7 +15,7 @@ export default function ProfilePage() {
   const [email, setEmail] = useState("");
 
   useEffect(() => {
-    if (!user) router.push("/signin");
+    if (!user) router.push("auth/signin");
     else {
       setName(user.name);
       setEmail(user.email);
@@ -29,7 +29,7 @@ export default function ProfilePage() {
       return;
     }
     try {
-      await updateProfile({ nome: name, email });
+      await updateProfile({ name, email });
       toast.success("Perfil atualizado com sucesso!");
     } catch (err: any) {
       console.error(err);
@@ -47,7 +47,7 @@ export default function ProfilePage() {
   const handleLogout = async () => {
     await signOut();
     toast("Logout realizado!");
-    router.push("/signin");
+    router.push("/auth/signin");
   };
 
   const hasChanged = !!user && (name !== user.name || email !== user.email);
