@@ -1,45 +1,44 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { toast } from "react-hot-toast";
-import { useAuth } from "@/hooks/useAuth";
-import type { SignInDTO } from "@/services/auth";
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
 
 export default function SignInPage() {
-  const router = useRouter();
-  const { signIn } = useAuth();
-  const [email, setEmail] = useState("");
-  const [senha, setSenha] = useState("");
-  const [loading, setLoading] = useState(false);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const router = useRouter();
 
-  const handleSignin = async (e: React.FormEvent) => {
+    const handleSignin = (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    try {
-      await signIn({ email, senha } as SignInDTO);
-      toast.success("Login efetuado com sucesso!");
-      router.push("/home");
-    } catch (err: any) {
-      console.error(err);
-      toast.error(err.response?.data?.message || "Credenciais inválidas.");
-    } finally {
-      setLoading(false);
+
+    const users = JSON.parse(localStorage.getItem("users") || "[]");
+    const user = users.find(
+      (u: any) => u.email === email && u.password === password
+    );
+
+    if (!user) {
+      setError("E-mail ou senha inválidos.");
+      return;
     }
+    
+    localStorage.setItem("loggedUser", JSON.stringify(user));
+    setError("");
+    router.push("/home"); // Redireciona para a home ou outra página desejada
+  
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-background p-3">
-      <div className="relative bg-card rounded-3xl shadow-xl w-full max-w-sm overflow-hidden">
-        <div className="relative h-30 sm:h-45 md:h-50 lg:h-45 xl:h-50">
+    <div className="flex items-center justify-center min-h-screen bg-orange-50 p-3">
+      <div className="relative bg-white rounded-3xl shadow-xl w-full max-w-sm overflow-hidden">
+        <div className="relative h-30 sm:h-45 md:h-50 lg:h-45 xl:h-50"> 
           <img
             src="/imageLogin.svg"
             alt="Hotel Building"
             className="absolute inset-0 w-full h-full object-cover object-center rounded-t-3xl"
           />
-          <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 w-24 h-24 bg-primary rounded-full flex items-center justify-center shadow-lg">
+          <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 w-24 h-24 bg-orange-500 rounded-full flex items-center justify-center shadow-lg">
             <svg
               className="w-16 h-16 text-white"
               fill="currentColor"
@@ -55,55 +54,49 @@ export default function SignInPage() {
           <h2 className="text-3xl font-bold text-center text-gray-800 mb-4 mt-1">
             Login
           </h2>
-          <form onSubmit={handleSignin} className="space-y-3">
+          <form onSubmit={handleSignin} className="space-y-3"> 
             <div>
-              <label
-                className="block text-gray-700 text-sm font-medium mb-1"
-                htmlFor="email"
-              >
+              <label className="block text-gray-700 text-sm font-medium mb-1" htmlFor="email">
                 Email
               </label>
-              <Input
+              <input
                 type="email"
                 id="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                placeholder="email@gmail.com"
+                className="w-full h-10 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 text-gray-800"
+                placeholder="email@gmail.com" 
               />
             </div>
             <div>
-              <label
-                className="block text-gray-700 text-sm font-medium mb-1"
-                htmlFor="senha"
-              >
+              <label className="block text-gray-700 text-sm font-medium mb-1" htmlFor="password">
                 Senha
               </label>
-              <Input
+              <input
                 type="password"
-                id="senha"
-                value={senha}
-                onChange={(e) => setSenha(e.target.value)}
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 required
+                className="w-full h-10 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 text-gray-800"
                 placeholder="••••••••••••"
               />
             </div>
-            <div className="text-center">
-              <Button
+            <div className='text-center'>
+                <button
                 type="submit"
-                className="w-full h-9 bg-primary text-white mt-2 font-semibold py-3 rounded-full"
-                disabled={loading}
-              >
-                {loading ? "Entrando..." : "Entrar"}
-              </Button>
+                className=" w-30 bg-orange-500 text-white text-center font-semibold py-3 rounded-lg hover:bg-orange-600 transition-colors duration-200 shadow-md"
+                >
+                Entrar
+                </button>
             </div>
+            {error && <p className="text-red-600 text-center">{error}</p>}
+
           </form>
           <p className="mt-4 text-center text-sm text-gray-600">
-            Não tem conta?{" "}
-            <a
-              href="/auth/signup"
-              className="text-primary hover:underline font-semibold"
-            >
+            Não tem conta?{' '}
+            <a href="/auth/signup" className="text-orange-500 hover:underline font-semibold">
               Cadastre-se
             </a>
           </p>
