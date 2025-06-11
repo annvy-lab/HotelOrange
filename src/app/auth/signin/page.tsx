@@ -1,52 +1,38 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "react-hot-toast";
+import { useAuth } from "@/hooks/useAuth";
+import type { SignInDTO } from "@/services/auth";
 
 export default function SignInPage() {
+  const router = useRouter();
+  const { signIn } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState(false);
-  const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
-  const handleSignin = (e: React.FormEvent) => {
+  const handleSignin = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    const users = JSON.parse(localStorage.getItem("users") || "[]");
-    const user = users.find(
-      (u: any) => u.email === email && u.password === password
-    );
-
-    if (!user) {
-      setError("Credenciais inválidas.");
-      return;
+    setLoading(true);
+    try {
+      await signIn({ email, senha: password } as SignInDTO);
+      toast.success("Login efetuado com sucesso!");
+      router.push("/home");
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err.response?.data?.message || "Credenciais inválidas.");
+    } finally {
+      setLoading(false);
     }
-
-    localStorage.setItem("loggedUser", JSON.stringify(user));
-    setError("");
-    setSuccess(true);
-    setTimeout(() => router.push("/home"), 1500);
   };
 
-  useEffect(() => {
-    if (error) {
-      toast.error(error);
-    }
-  }, [error]);
-
-  useEffect(() => {
-    if (success) {
-      toast.success("Login efetuado com sucesso!");
-    }
-  }, [success]);
-
   return (
-    <div className="flex items-center justify-center min-h-screen bg-orange-50 p-3">
-      <div className="relative bg-white rounded-3xl shadow-xl w-full max-w-sm overflow-hidden">
+    <div className="flex items-center justify-center min-h-screen bg-background p-3">
+      <div className="relative bg-card rounded-3xl shadow-xl w-full max-w-sm overflow-hidden">
         <div className="relative h-30 sm:h-45 md:h-50 lg:h-45 xl:h-50">
           <img
             src="/imageLogin.svg"
@@ -83,7 +69,6 @@ export default function SignInPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full h-10 px-4 py-3 border border-gray-300 full focus:outline-none focus:ring-2 focus:ring-orange-400 text-gray-800 rounded-full"
                 placeholder="email@gmail.com"
               />
             </div>
@@ -100,16 +85,16 @@ export default function SignInPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full h-10 px-4 py-3 border rounded-full border-gray-300 full focus:outline-none focus:ring-2 focus:ring-orange-400 text-gray-800"
                 placeholder="••••••••••••"
               />
             </div>
             <div className="text-center">
               <Button
                 type="submit"
-                className=" w-full h-9 bg-primary text-white text-center mt-2 font-semibold py-3 rounded-full transition-colors duration-200 shadow-md"
+                className="w-full h-9 bg-primary text-white mt-2 font-semibold py-3 rounded-full"
+                disabled={loading}
               >
-                Entrar
+                {loading ? "Entrando..." : "Entrar"}
               </Button>
             </div>
           </form>
